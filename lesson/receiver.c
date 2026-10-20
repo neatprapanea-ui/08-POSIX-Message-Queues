@@ -7,7 +7,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-// 1. init msg struct
+// 1. init msg struct (โครงสร้างข้อมูลต้องเหมือน sender.c)
 struct a_msg {
   long int msg_type;
   char data[BUFSIZ];
@@ -16,10 +16,10 @@ struct a_msg {
 int main(void) {
   int running = 1, msgID;
   struct a_msg a_msg;
-  long int rcv_msg_type = 0;
+  long int rcv_msg_type = 0; //แปลว่ารับข้อความชนิดอะไรก็ได้
   char buffer[BUFSIZ];
 
-  msgID = msgget((key_t)1234, 0666 | IPC_CREAT); // 2. get msgID from msgget()
+  msgID = msgget((key_t)1234, 0666 | IPC_CREAT); // 2. get msgID from msgget() อันนี้ยืดหยุ่น แบบว่า sender or receiver สร้างตัวไหนก่อนก็ได้
 
   if (msgID == -1) {
     fprintf(stderr, "msgget failed\n");
@@ -33,8 +33,9 @@ int main(void) {
     }
     printf("Received Message: %s", a_msg.data);
     if (strncmp(a_msg.data, "end", 3) == 0)
-      running = 0;
+      running = 0; 
   }
+  //ทำลาย Message Q ที่เราสร้างชึ้นมา
   if (msgctl(msgID, IPC_RMID, 0) == -1) { // 4. msgctl to remove the msgQ
     fprintf(stderr, "msgctl failed\n");
     exit(EXIT_FAILURE);

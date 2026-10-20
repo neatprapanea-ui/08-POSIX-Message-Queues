@@ -7,11 +7,12 @@
 #include <unistd.h>
 
 // dir name for posix msgQ (can be any name but "/" is needed in the front)
-#define Q_NAME "/pos_msgQ"
+#define Q_NAME "/pos_msgQ" //ตั้งชื่อ ชื่อต้องขึ้นต้นด้วย '/'เท่านั้น
 #define Q_PERM 0660
 #define MAX_MSG 3
 #define MAX_MSG_SIZE 256
 #define BUF_SIZE 60
+
 
 struct msgs {
   int written;  // posix no need to use long here
@@ -23,14 +24,14 @@ int main(void) {
   struct msgs a_msg;
   struct mq_attr q_attr;  // must provide this attr struct
   mqd_t mqd;  // use for posix msgQ ID data type
-  unsigned int priority = 0;  // use this instead of long msg_type
+  unsigned int priority = 0;  // use this instead of long msg_type (ตรงนี้ถ้าในsystem file จะเป็น 0 ไม่ได้ )
   char buffer[BUF_SIZE], *s;
 
   // attr init
   q_attr.mq_maxmsg = MAX_MSG;
   q_attr.mq_msgsize = MAX_MSG_SIZE;
 
-  mqd = mq_open(Q_NAME, O_WRONLY | O_CREAT, 0660, &q_attr);
+  mqd = mq_open(Q_NAME, O_WRONLY | O_CREAT, 0660, &q_attr); //ตรงargument ตัวสุดท้าย ถ้าไม่ต้องการที่จะเปลี่ยนแปลงอะไรก็ใส่ NULL
   if (mqd == -1) {
     perror("mq_open failed ");
     exit(EXIT_FAILURE);
@@ -41,7 +42,7 @@ int main(void) {
     s = fgets(buffer, BUF_SIZE, stdin);  
     printf("Size of msgs: %lu\n", sizeof(struct msgs));
     strcpy(a_msg.data, buffer);
-    if (mq_send(mqd, (void *)&a_msg, sizeof(struct msgs), priority) == -1) {  // send must contain sizeof struct and priority value
+    if (mq_send(mqd, (void *)&a_msg, sizeof(struct msgs), priority) == -1) {  // send must contain sizeof struct and priority value (ต้องระบุ priority เสมอ)
       perror("mq_send failed ");
       exit(EXIT_FAILURE);
     }

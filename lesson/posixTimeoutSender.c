@@ -7,7 +7,7 @@
 #include <time.h>
 #include <unistd.h>
 
-#define Q_NAME "/my_mq"
+#define Q_NAME "/my_mq" //ตัวนี้มี '_' ได้
 #define Q_PERM 0660
 #define MAX_MSG 3
 #define MAX_MSG_SIZE 256
